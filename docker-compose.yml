@@ -1,0 +1,25 @@
+version: '3.1'
+services:
+    jenkins-master:
+        container_name: jenkins-master
+        ports:
+            - '8080:8080'
+            - '50000:50000'
+        image: jenkins-master
+        environment:
+          HOST: "nexus.portavita.nl"
+          USER: "c.rojas"
+          PASSWORD: "4r0g9z6x3"
+          REALM: "Sonatype Nexus Repository Manager"
+
+    jenkins-slave:
+        container_name: jenkins-slave
+        restart: always
+        environment:
+            - 'JENKINS_URL=http://jenkins-master:8080'
+        image: jenkins-slave
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock  # Expor o daemon docker para o container
+            - /Users/youruser/Docker/Jenkins:/home/jenkins # Atenção ao ponto de montagem que deve ser adequado ao seu ambiente.
+        depends_on:
+            - jenkins-master
